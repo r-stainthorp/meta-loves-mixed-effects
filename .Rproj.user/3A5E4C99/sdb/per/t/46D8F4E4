@@ -1,0 +1,17 @@
+{
+    "contents" : "#### MATCHING BIOORACLE DATA TO METADATA FILE\n\nmeta<-read.csv(\"\",header=TRUE)\n\n# read from ESRI asciigrid format; extract mean sea-surface temperature\ngridtemp <- readAsciiGrid(\"~/Desktop/roshan study/BioOracle_7070RV/sstmean.asc\")\n# create data frame\ntabletemp <- data.frame(gridtemp)\n\ngridtempmax <- readAsciiGrid(\"~/Desktop/roshan study/BioOracle_7070RV/sstmax.asc\")\ntabletempmax <- data.frame(gridtempmax)\n\nalldata=read.csv(\"occurence2.csv\")\nsites=ddply(alldata,c(\"Site\"),summarize,SiteLat=mean(SiteLat),SiteLong=mean(SiteLong))\n\nSST=matrix(0,dim(sites)[1])\nfor (a in 1:dim(sites)[1]){\n  mins=data.frame(sqrt((abs(sites[a,]$SiteLat+70)-abs(tabletemp$s2+70))^2+(abs(sites[a,]$SiteLong+180)-abs(tabletemp$s1+180))^2))\n  SST[a,]=tabletemp[which(mins==(min(mins))),][1,1] \n}\n\nSSTmax=matrix(0,dim(sites)[1])\nfor (a in 1:dim(sites)[1]){\n  mins=data.frame(sqrt((abs(sites[a,]$SiteLat+70)-abs(tabletemp$s2+70))^2+(abs(sites[a,]$SiteLong+180)-abs(tabletemp$s1+180))^2))\n  SSTmax[a,]=tabletempmax[which(mins==(min(mins))),][1,1] \n}\n\n####take what you have done and add to original data set",
+    "created" : 1417006030914.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1103886960",
+    "id" : "46D8F4E4",
+    "lastKnownWriteTime" : 1417078703,
+    "path" : "~/Documents/meta-loves-mixed-effects/meta_code.R",
+    "project_path" : "meta_code.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

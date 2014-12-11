@@ -1,0 +1,16 @@
+{
+    "contents" : "# load .csv file\nmeta <- read.csv(\"lat_long.csv\", header=TRUE)\nnames(meta)\n\n#### MAKING A MAP\n\nlibrary(maps)\n\n# set country lines to grey\npar(fg=\"grey\")\nmap(\"world\",cex=1,fill=TRUE,col=\"grey\",ylim=c(-80,80),xlim=c(-180,180))\n\n# add latitude and longitude from your data file\npoints(data=meta,source_lat~source_long,col=\"black\",ylim=c(-80,80),xlim=c(-180,180)) \n\npoints(data=meta,lat~long,col=\"red\",ylim=c(-80,80),xlim=c(-180,180)) \n\n# subset data for one column and just include growth rate\ngrate<-subset(meta,meta$r1==\"growth rate\") \n# look at distribution\nhist(grate$r1_measure)\n\n# subset data for one column and just include respiration rate\no2<-subset(meta,meta$r1==\"respiration rate\")\n# look at distribution\nhist(o2$r1_measure)\n\n#### MAKING A MIXED EFFECTS MODEL\n\nlibrary(nlme)\nlibrary(plyr)\nlibrary(reshape2)\n\n# look at relationship between growth rate and experimental temperature\nplot(data=grate,r1_measure~temp_deg)\n\n# display structure of \"temp_deg\" column in grate object\nstr(grate$temp_deg)\n\n# set structure of \"temp_deg\" column to numeric\nas.numeric(grate$temp_deg)\n\n# fit a linear model using generalised least squares\nmodel1<-gls(r1_measure~temp_deg,data=grate)\nplot(model1)\n\n# produce a normal QQ plot of the model\nqqnorm(model1)\n\n# fit a linear mixed-effects model (allows for nested random effects)\nmodel2<-lme(log(r1_measure+4)~temp_deg,data=grate,random=~1|source) # add random effect\nplot(model2)\n\n# produce a normal QQ plot of the model\nqqnorm(model2)\n\n# try \"+4\" to remove negative values\nplot(data=grate,log(r1_measure+4)~temp_deg)\n\n# fit a linear mixed-effects model adding an interaction between temp and o2\nmodel3<-lme(log(r1_measure+4)~temp_deg*o2_sat,data=grate,random=~1|source)\nplot(model3)\n\nsummary(model3)\n\nqqnorm(model3)\n\n",
+    "created" : 1417077075752.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2033934910",
+    "id" : "FF1C896B",
+    "lastKnownWriteTime" : 1417084109,
+    "path" : "~/Documents/meta-loves-mixed-effects/rcode_meta.R",
+    "project_path" : "rcode_meta.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
